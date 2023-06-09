@@ -1,0 +1,129 @@
+# : << 'EOF'
+
+set -g default-terminal "screen-256color"
+set -g prefix2 C-a                        # GNU-Screen compatible prefix
+bind C-a send-prefix -2
+
+# 绑定快捷键为r
+bind r source-file ~/.tmux.conf \; display-message "Config reloaded.."
+
+unbind '"'
+bind - splitw -v -c '#{pane_current_path}' # 垂直方向新增面板，默认进入当前目录
+unbind %
+bind _ splitw -h -c '#{pane_current_path}' # 水平方向新增面板，默认进入当前目录
+bind C-e run "vi '$HOME/.tmux.conf'"
+
+#setw -g mode-mouse on # 支持鼠标选取文本等
+#setw -g mouse-resize-pane on # 支持鼠标拖动调整面板的大小(通过拖动面板间的分割线)
+#setw -g mouse-select-pane on # 支持鼠标选中并切换面板
+#setw -g mouse-select-window on # 支持鼠标选中并切换窗口(通过点击状态栏窗口名称)
+bind m run "cut -c3- '$HOME/.tmux.conf' | sh -s _toggle_mouse"
+
+# 绑定hjkl键为面板切换的上下左右键
+bind -r k select-pane -U # 绑定k为↑
+bind -r j select-pane -D # 绑定j为↓
+bind -r h select-pane -L # 绑定h为←
+bind -r l select-pane -R # 绑定l为→
+bind > swap-pane -D
+bind < swap-pane -U
+
+# create session
+bind C-c new-session
+
+# find session
+bind C-f command-prompt -p find-session 'switch-client -t %%'
+
+# session navigation
+bind BTab switch-client -l  # move to last session
+
+set -g base-index 1 # 设置窗口的起始下标为1
+set -g pane-base-index 1 # 设置面板的起始下标为1
+
+set -q -g status-utf8 on # 状态栏支持utf8
+setw -q -g utf8 on
+setw -g automatic-rename on
+set -g renumber-windows on
+setw -g allow-rename off
+
+set -g history-limit 50000
+
+set -g status-interval 10 # 状态栏刷新时间
+set -g status-justify left # 状态栏列表左对齐
+setw -g monitor-activity on # 非当前窗口有内容更新时在状态栏通知
+
+#set -g status-bg "#5fff00" # 设置状态栏背景黑色
+set -g status-bg "#080808" # 设置状态栏背景黑色
+set -g status-fg "#8a8a8a" # 设置状态栏前景黄色
+#set -g status-style "bg=black, fg=#e4e4e4" # 状态栏前景背景色
+
+run-shell 'tmux setenv -g TODAY $(date +%u)'
+%if "#{==:#{TODAY},1}"
+	run-shell 'tmux setenv -g LOGO "$(echo "☭")"'
+%elif "#{==:#{TODAY},2}"
+	run-shell 'tmux setenv -g LOGO "$(echo "☯ ")"'
+%elif "#{==:#{TODAY},3}"
+	run-shell 'tmux setenv -g LOGO "$(echo "☂ ")"'
+%elif "#{==:#{TODAY},4}"
+	run-shell 'tmux setenv -g LOGO "$(echo "✈ ")"'
+%elif "#{==:#{TODAY},5}"
+	run-shell 'tmux setenv -g LOGO "$(echo "☎ ")"'
+%elif "#{==:#{TODAY},6}"
+	run-shell 'tmux setenv -g LOGO "$(echo "❃")"'
+%else
+	run-shell 'tmux setenv -g LOGO "$(echo "♥")"'
+%endif
+set -g status-left " #{LOGO} #S #[bg=#d70000 nobold, fg=yellow]\uE0B0 #[bold]#(whoami)@#H #[bg=#333341 nobold, fg=colour196]\uE0B0"
+#https://www.soutaowang.com/58078.html
+
+set -g status-left-style "bg=yellow,fg=black bold"
+set -g status-left-length 300 # 状态栏左边长度300
+
+set -wg window-status-format " #[fg=colour190]•#[fg=colour7 bold]#I♪#W " # 状态栏窗口名称格式
+set -wg window-status-current-format "#[bg=colour129, fg=colour243 nobold]\uE0B0#[fg=colour144] •#[bg=colour129 bold,fg=#080808]#I♫#W#[fg=colour233 nobold blink]#{?window_zoomed_flag,◥ ,} #[bg=#333333 nobold noblink,fg=colour129]\uE0B0"
+#set -wg window-status-separator "#[bg=#00afff,fg=#080808]\uE0B0" # 状态栏窗口名称之间的间隔
+set -wg window-status-separator "" # 状态栏窗口名称之间的间隔
+#set -wg window-status-current-style "bg=#00afff bold,fg=#080808" # 状态栏当前窗口名称的样式
+set -wg window-status-last-style "fg=#e4e4e4" # 状态栏最后一个窗口名称的样式
+set -wg window-status-style "bg=colour243, fg=#e4e4e4"
+set -wg window-status-activity-style "bg=colour8 bold, fg=#e4e4e4 blink"
+
+%if "#{==:#{TODAY},1}"
+	run-shell 'tmux setenv -g SMILE "$(echo " ~(@^_^@)~") "; tmux setenv -g SAYING "$(echo " No pain, no gain! ")"'
+%elif "#{==:#{TODAY},2}"
+	run-shell 'tmux setenv -g SMILE "$(echo " \(^o^)/ ")"; tmux setenv -g SAYING "$(echo " Believe in yourself. ")"'
+%elif "#{==:#{TODAY},3}"
+	run-shell 'tmux setenv -g SMILE "$(echo " =￣ω￣= ")"; tmux setenv -g SAYING "$(echo " Knowledge is power. ")"'
+%elif "#{==:#{TODAY},4}"
+	run-shell 'tmux setenv -g SMILE "$(echo " O(∩_∩)O ")"; tmux setenv -g SAYING "$(echo " Do one thing at a time ")"'
+%elif "#{==:#{TODAY},5}"
+	run-shell 'tmux setenv -g SMILE "$(echo " q^__^p ")"; tmux setenv -g SAYING "$(echo " Never say die. ")"'
+%elif "#{==:#{TODAY},6}"
+	run-shell 'tmux setenv -g SMILE "$(echo " \(^o^)/ ")"; tmux setenv -g SAYING "$(echo " Life is but a span. ")"'
+%else
+	run-shell 'tmux setenv -g SMILE "$(echo " \(^o^)/ ")"; tmux setenv -g SAYING "$(echo " You never know your luck. ")"'
+%endif
+set -g status-right '#[bg=colour8, fg=colour192 nobold noblink]#{?mouse,♌ ,}#[bg=colour8 blink]#{?client_prefix,⌨,}  #[bg=colour8, fg=colour196 nobold noblink]'\uE0B2'#[bg=colour196,fg=colour255 bold]#{SAYING}#[bg=colour196,fg=colour255 noblink nobold]'\uE0B2'#[bg=colour255,fg=colour196 bold]#{SMILE}#[bg=colour255, fg=colour76 noblink nobold]'\uE0B2'#[fg=black,bg=colour76] %A'
+
+bind C-m run 'tmux setenv -g SMILE ""; tmux setenv -g SAYING ""'
+#set -g status-right-style "bg=#ff00af bold,fg=white"
+set -g status-right-length 500 # 状态栏左边长度500
+
+set -g message-style "bg=#5fff00 bold, fg=black" # 指定消息通知的前景、后景色
+
+run-shell ~/.tmux/plugins/tmux-resurrect/resurrect.tmux
+
+# EOF
+#
+#
+# _toggle_mouse() {
+#	old=$(tmux show -gv mouse)
+#	new=""
+#	if [ "$old" = "on" ]; then
+#		new="off"
+#	else
+#		new="on"
+#	fi
+#	tmux set -g mouse $new
+# }
+
+# "$@"
